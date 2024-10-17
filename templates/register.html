@@ -3,31 +3,161 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
+    <title>Register - Smart Home Dashboard</title>
+
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <!-- Embedded CSS for styling -->
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to right, #ece9e6, #ffffff);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"], input[type="password"], input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        input:invalid {
+            border-color: red;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .login-link {
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .login-link a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        .flash-message {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            border-radius: 5px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                width: 100%;
+                margin: 0 20px;
+            }
+        }
+
+        /* Password Toggle Icon */
+        .password-toggle {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+
+        .input-container {
+            position: relative;
+        }
+    </style>
 </head>
 <body>
-    <h1>Register</h1>
-    <form method="POST" action="{{ url_for('register') }}">
-        <label for="username">Username:</label>
-        <input type="text" name="username" required><br>
 
-        <label for="password">Password:</label>
-        <input type="password" name="password" required><br>
+    <div class="container">
+        <h1>Register</h1>
 
-        <label for="email">Email:</label>
-        <input type="email" name="email" required><br>
+        <!-- Flash messages section -->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="flash-message">
+                    {% for message in messages %}
+                        {{ message }}<br>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
 
-        <input type="submit" value="Register">
-    </form>
+        <form method="POST">
+            <div class="input-container">
+                <input type="text" name="username" placeholder="Username" aria-label="Username" required>
+            </div>
+            <div class="input-container">
+                <input type="email" name="email" placeholder="Email" aria-label="Email" required>
+            </div>
+            <div class="input-container">
+                <input type="password" name="password" placeholder="Password" aria-label="Password" required id="password-field">
+                <i class="fas fa-eye password-toggle" id="toggle-password"></i>
+            </div>
+            <button type="submit" aria-label="Register">Register</button>
+        </form>
 
-    {% with messages = get_flashed_messages(with_categories=True) %}
-        {% if messages %}
-            <ul>
-            {% for category, message in messages %}
-                <li class="{{ category }}">{{ message }}</li>
-            {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}
+        <div class="login-link">
+            Already have an account? <a href="/login">Login here</a>
+        </div>
+    </div>
+
+    <script>
+        // Password toggle function
+        const togglePassword = document.getElementById('toggle-password');
+        const passwordField = document.getElementById('password-field');
+
+        togglePassword.addEventListener('click', function() {
+            // Toggle the type attribute
+            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordField.setAttribute('type', type);
+
+            // Toggle the eye icon
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
+    </script>
+
 </body>
 </html>

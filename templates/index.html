@@ -3,86 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Smart Home Dashboard for managing water usage, energy consumption, device control, and more.">
     <title>Smart Home Dashboard</title>
+
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
     <!-- Embedded CSS for styling -->
     <style>
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f0f0f0;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to right, #ece9e6, #ffffff);
             margin: 0;
             padding: 0;
-        }
-
-        h1 {
-            color: #333;
-            margin-top: 20px;
-        }
-
-        ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        li {
-            margin: 10px 0;
-            padding: 10px;
-            background-color: #fff;
-            border: 1px solid #ccc;
-            display: inline-block;
-            width: 300px;
-            border-radius: 8px;
-        }
-
-        button {
-            padding: 5px 10px;
-            margin-left: 10px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        #energy {
-            margin-top: 30px;
-        }
-
-        #energy-consumption {
-            font-weight: bold;
-            font-size: 1.2em;
-        }
-
-        .container {
             display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
+            flex-direction: column;
+            align-items: center;
         }
 
-        li h3 {
-            margin: 0;
-            padding: 0;
-        }
-
-        /* Navigation bar styles */
         nav {
+            width: 100%;
             background-color: #007bff;
             padding: 10px;
+            text-align: center;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
         }
 
         nav a {
             color: white;
             text-decoration: none;
             padding: 10px 15px;
+            margin: 0 5px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
         }
 
         nav a:hover {
             background-color: #0056b3;
+        }
+
+        h1 {
+            color: #333;
+            margin-top: 70px;
         }
 
         .flash-message {
@@ -92,6 +56,88 @@
             border: 1px solid #bee5eb;
             color: #0c5460;
             border-radius: 5px;
+            width: 80%;
+            text-align: center;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .option-card {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            margin: 10px;
+            padding: 20px;
+            text-align: center;
+            width: 200px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .option-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .option-icon {
+            font-size: 50px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 10px 15px;
+            margin-top: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #emergency-button {
+            background-color: red;
+        }
+
+        #emergency-button:hover {
+            background-color: darkred;
+        }
+
+        #language-selector {
+            margin-top: 20px;
+        }
+
+        /* Loader */
+        .loader {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 2s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .option-card {
+                width: 100%;
+                margin: 10px 0;
+            }
         }
     </style>
 </head>
@@ -102,7 +148,7 @@
         <a href="/">Home</a>
         <a href="/devices">Devices</a>
         <a href="/energy">Energy Consumption</a>
-        <a href="/logout">Logout</a> <!-- Logout link -->
+        <a href="/logout">Logout</a>
     </nav>
 
     <!-- Page Content -->
@@ -119,9 +165,43 @@
         {% endif %}
     {% endwith %}
 
-    <div id="devices">
-        <h2>Devices</h2>
-        <ul id="device-list" class="container"></ul>
+    <div class="container">
+        <div class="option-card" onclick="location.href='/water_usage'">
+            <div class="option-icon" aria-label="Water Usage Icon">
+                <i class="fas fa-tint"></i>
+            </div>
+            <h3>Water Usage</h3>
+            <button>Check Usage</button>
+        </div>
+
+        <div class="option-card" onclick="location.href='/electricity_usage'">
+            <div class="option-icon" aria-label="Electricity Usage Icon">
+                <i class="fas fa-bolt"></i>
+            </div>
+            <h3>Electricity Usage</h3>
+            <button>Check Usage</button>
+        </div>
+
+        <div class="option-card">
+            <div class="option-icon" aria-label="Language Selection Icon">
+                <i class="fas fa-language"></i>
+            </div>
+            <h3>Language Selection</h3>
+            <select id="language-selector" onchange="changeLanguage()">
+                <option value="en">English</option>
+                <option value="es">Spanish</option>
+                <option value="fr">French</option>
+                <option value="de">German</option>
+            </select>
+        </div>
+
+        <div class="option-card">
+            <div class="option-icon" aria-label="Emergency Shutdown Icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3>Emergency Shutdown</h3>
+            <button id="emergency-button" onclick="emergencyShutdown()">Shutdown</button>
+        </div>
     </div>
 
     <div id="energy">
@@ -132,54 +212,41 @@
     <!-- Embedded JavaScript to fetch data and control devices -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Fetch device status
-            fetch('/devices')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok'); // Handle non-200 responses
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    const deviceList = document.getElementById('device-list');
-                    deviceList.innerHTML = '';
-
-                    // Log fetched data to the console for debugging
-                    console.log('Fetched devices:', data);
-
-                    data.forEach(device => {
-                        let listItem = document.createElement('li');
-                        listItem.innerHTML = `
-                            <h3>${device[1]}</h3>
-                            <p>Status: ${device[2] ? 'On' : 'Off'}</p>
-                            <button onclick="toggleDevice('${device[1]}', '${device[2] ? 'off' : 'on'}')">
-                                Turn ${device[2] ? 'Off' : 'On'}
-                            </button>
-                        `;
-                        deviceList.appendChild(listItem);
-                    });
-                })
-                .catch(err => console.error('Error fetching devices:', err)); // Log any errors
+            // Show loader
+            const loader = document.createElement('div');
+            loader.className = 'loader';
+            document.body.appendChild(loader);
 
             // Fetch energy consumption
             fetch('/energy')
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error('Network response was not ok'); // Handle non-200 responses
+                        throw new Error('Network response was not ok');
                     }
                     return response.json();
                 })
                 .then(data => {
-                    document.getElementById('energy-consumption').innerText = data.total_energy_consumption || 0; // Handle null values
+                    document.getElementById('energy-consumption').innerText = data.total_energy_consumption || 0;
                 })
-                .catch(err => console.error('Error fetching energy consumption:', err)); // Log any errors
+                .catch(err => console.error('Error fetching energy consumption:', err))
+                .finally(() => loader.style.display = 'none'); // Hide loader
         });
 
-        // Function to toggle device on or off
-        function toggleDevice(device, action) {
-            fetch(`/devices/${device}/${action}`, { method: 'POST' })
-                .then(() => window.location.reload())  // Refresh the page after updating device status
-                .catch(err => console.error('Error toggling device:', err)); // Log any errors
+        function changeLanguage() {
+            const selectedLanguage = document.getElementById('language-selector').value;
+            alert('Language changed to: ' + selectedLanguage);
+            console.log('Selected Language:', selectedLanguage);
+        }
+
+        function emergencyShutdown() {
+            if (confirm('Are you sure you want to perform an emergency shutdown?')) {
+                fetch('/emergency_shutdown', { method: 'POST' })
+                    .then(() => {
+                        alert('Emergency shutdown executed successfully!');
+                        window.location.reload();
+                    })
+                    .catch(err => console.error('Error performing emergency shutdown:', err));
+            }
         }
     </script>
 

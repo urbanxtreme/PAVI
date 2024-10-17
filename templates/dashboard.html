@@ -3,21 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Smart Home Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Navigation bar styling */
+        nav {
+            background-color: #007bff;
+            padding: 15px;
+        }
+
+        nav a {
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            background-color: #0056b3;
+        }
+
+        /* Dashboard styling */
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .welcome-message {
+            font-size: 1.2em;
+            color: #007bff;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-card {
+            background-color: #f8f9fa;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .dashboard-card h3 {
+            margin: 0;
+            font-size: 1.4em;
+        }
+
+        .logout-btn {
+            display: block;
+            margin: 30px auto;
+            padding: 10px 20px;
+            background-color: #dc3545;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .logout-btn:hover {
+            background-color: #c82333;
+        }
+
+        /* Flash messages styling */
+        .alert {
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to Your Dashboard</h1>
-    <p>Logged in as: {{ current_user.id }}</p>
-    <a href="{{ url_for('logout') }}">Logout</a>
 
-    {% with messages = get_flashed_messages(with_categories=True) %}
-        {% if messages %}
-            <ul>
-            {% for category, message in messages %}
-                <li class="{{ category }}">{{ message }}</li>
-            {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}
+    <!-- Navigation Bar -->
+    <nav>
+        <a href="/">Home</a>
+        <a href="/devices">Devices</a>
+        <a href="/electricity_usage">Electricity Usage</a>
+        <a href="/energy">Energy</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <h1>Welcome to Your Smart Home Dashboard</h1>
+        <p class="welcome-message">Logged in as: <strong>{{ current_user.id }}</strong></p>
+
+        <!-- Dashboard Cards -->
+        <div class="dashboard-card">
+            <h3>Energy Consumption</h3>
+            <p>View the energy usage of your devices in real-time.</p>
+            <a href="/electricity_usage" class="btn btn-primary">View Electricity Usage</a>
+        </div>
+
+        <div class="dashboard-card">
+            <h3>Water Usage</h3>
+            <p>Track your water consumption statistics.</p>
+            <a href="/water_usage" class="btn btn-primary">View Water Usage</a>
+        </div>
+
+        <div class="dashboard-card">
+            <h3>Manage Devices</h3>
+            <p>Control and monitor all connected devices in your home.</p>
+            <a href="/devices" class="btn btn-primary">Manage Devices</a>
+        </div>
+
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages(with_categories=True) %}
+            {% if messages %}
+                <div>
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Logout Button -->
+        <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+    </div>
+
 </body>
 </html>
