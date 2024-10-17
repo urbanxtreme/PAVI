@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Home Dashboard</title>
+
+    <!-- Embedded CSS for styling -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            color: #333;
+            margin-top: 20px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            display: inline-block;
+            width: 300px;
+            border-radius: 8px;
+        }
+
+        button {
+            padding: 5px 10px;
+            margin-left: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #energy {
+            margin-top: 30px;
+        }
+
+        #energy-consumption {
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        li h3 {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Page Content -->
+    <h1>Smart Home Dashboard</h1>
+
+    <div id="devices">
+        <h2>Devices</h2>
+        <ul id="device-list" class="container"></ul>
+    </div>
+
+    <div id="energy">
+        <h2>Energy Consumption</h2>
+        <p>Total Energy: <span id="energy-consumption">0</span> kWh</p>
+    </div>
+
+    <!-- Embedded JavaScript to fetch data and control devices -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fetch device status
+            fetch('/devices')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok'); // Handle non-200 responses
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const deviceList = document.getElementById('device-list');
+                    deviceList.innerHTML = '';
+
+                    // Log fetched data to the console for debugging
+                    console.log('Fetched devices:', data);
+
+                    data.forEach(device => {
+                        let listItem = document.createElement('li');
+                        listItem.innerHTML = `
+                            <h3>${device[1]}</h3>
+                            <p>Status: ${device[2] ? 'On' : 'Off'}</p>
+                            <button onclick="toggleDevice('${device[1]}', '${device[2] ? 'off' : 'on'}')">
+                                Turn ${device[2] ? 'Off' : 'On'}
+                            </button>
+                        `;
+                        deviceList.appendChild(listItem);
+                    });
+                })
+                .catch(err => console.error('Error fetching devices:', err)); // Log any errors
+
+            // Fetch energy consumption
+            fetch('/energy')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok'); // Handle non-200 responses
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('energy-consumption').innerText = data.total_energy_consumption || 0; // Handle null values
+                })
+                .catch(err => console.error('Error fetching energy consumption:', err)); // Log any errors
+        });
+
+        // Function to toggle device on or off
+        function toggleDevice(device, action) {
+            fetch(`/devices/${device}/${action}`, { method: 'POST' })
+                .then(() => window.location.reload())  // Refresh the page after updating device status
+                .catch(err => console.error('Error toggling device:', err)); // Log any errors
+        }
+    </script>
+
+</body>
+</html>
