@@ -68,12 +68,56 @@
             margin: 0;
             padding: 0;
         }
+
+        /* Navigation bar styles */
+        nav {
+            background-color: #007bff;
+            padding: 10px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+        }
+
+        nav a:hover {
+            background-color: #0056b3;
+        }
+
+        .flash-message {
+            margin: 20px;
+            padding: 15px;
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
 
+    <!-- Navigation Bar -->
+    <nav>
+        <a href="/">Home</a>
+        <a href="/devices">Devices</a>
+        <a href="/energy">Energy Consumption</a>
+        <a href="/logout">Logout</a> <!-- Logout link -->
+    </nav>
+
     <!-- Page Content -->
     <h1>Smart Home Dashboard</h1>
+
+    <!-- Flash messages section -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="flash-message">
+                {% for message in messages %}
+                    {{ message }}<br>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
 
     <div id="devices">
         <h2>Devices</h2>
