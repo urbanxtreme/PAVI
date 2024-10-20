@@ -118,8 +118,8 @@
             <div class="collapse navbar-collapse">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/devices">Devices</a></li>
                     <li class="nav-item"><a class="nav-link" href="/electricity_usage">Electricity Usage</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/recommendations">Recommendations</a></li>
                     <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
                 </ul>
             </div>
@@ -129,44 +129,118 @@
     <!-- Page Content -->
     <h1>Electricity Usage</h1>
 
-    <div class="container d-flex flex-wrap justify-content-center" id="device-list">
-        {% for device in electricity_data %}
-            <div class="device-card text-center">
-                {% if device.device_name == 'light' %}
-                    <img src="{{ url_for('static', filename='light.png') }}" alt="Light" class="device-image">
-                {% elif device.device_name == 'thermostat' %}
-                    <img src="{{ url_for('static', filename='thermostat.png') }}" alt="Thermostat" class="device-image">
-                {% elif device.device_name == 'security_camera' %}
-                    <img src="{{ url_for('static', filename='security_camera.png') }}" alt="Security Camera" class="device-image">
-                {% elif device.device_name == 'Air Conditioner' %}
-                    <img src="{{ url_for('static', filename='ac.png') }}" alt="Air Conditioner" class="device-image">
-                {% elif device.device_name == 'Heater' %}
-                    <img src="{{ url_for('static', filename='heater.png') }}" alt="Heater" class="device-image">
-                {% elif device.device_name == 'Washing Machine' %}
-                    <img src="{{ url_for('static', filename='washing_machine.png') }}" alt="Washing Machine" class="device-image">
-                {% elif device.device_name == 'Refrigerator' %}
-                    <img src="{{ url_for('static', filename='fridge.png') }}" alt="Fridge" class="device-image">
-                {% else %}
-                    <img src="{{ url_for('static', filename='default_device.png') }}" alt="Device" class="device-image">
-                {% endif %}
+    <div class="container">
+        <div class="d-flex flex-wrap justify-content-center" id="device-list">
+            {% for device in electricity_data %}
+                <div class="device-card text-center">
+                    {% if device.device_name == 'light' %}
+                        <img src="{{ url_for('static', filename='light.png') }}" alt="Light" class="device-image">
+                    {% elif device.device_name == 'thermostat' %}
+                        <img src="{{ url_for('static', filename='thermostat.png') }}" alt="Thermostat" class="device-image">
+                    {% elif device.device_name == 'security_camera' %}
+                        <img src="{{ url_for('static', filename='security_camera.png') }}" alt="Security Camera" class="device-image">
+                    {% elif device.device_name == 'Air Conditioner' %}
+                        <img src="{{ url_for('static', filename='ac.png') }}" alt="Air Conditioner" class="device-image">
+                    {% elif device.device_name == 'Heater' %}
+                        <img src="{{ url_for('static', filename='heater.png') }}" alt="Heater" class="device-image">
+                    {% elif device.device_name == 'Washing Machine' %}
+                        <img src="{{ url_for('static', filename='washing_machine.png') }}" alt="Washing Machine" class="device-image">
+                    {% elif device.device_name == 'Refrigerator' %}
+                        <img src="{{ url_for('static', filename='fridge.png') }}" alt="Fridge" class="device-image">
+                    {% else %}
+                        <img src="{{ url_for('static', filename='default_device.png') }}" alt="Device" class="device-image">
+                    {% endif %}
 
-                <h3 class="device-name">{{ device.device_name | capitalize }}</h3>
-                <p>Energy Consumption: <strong>{{ device.energy_consumption }} kWh</strong></p>
-                <p>Status: <span class="{{ 'status-on' if device.status == 'On' else 'status-off' }}">
-                        {{ device.status }}</span></p>
-                <button onclick="toggleDevice('{{ device.device_name }}', '{{ 'off' if device.status == 'On' else 'on' }}')">
-                    Turn {{ 'Off' if device.status == 'On' else 'On' }}
-                </button>
-                <div class="loader" id="loader-{{ device.device_name }}" aria-live="polite">Updating...</div>
-            </div>
-        {% endfor %}
+                    <h3 class="device-name">{{ device.device_name | capitalize }}</h3>
+                    <p>Energy Consumption: <strong>{{ device.energy_consumption }} kWh</strong></p>
+                    <p>Status: <span class="{{ 'status-on' if device.status == 'On' else 'status-off' }}">
+                            {{ device.status }}</span></p>
+                    <button onclick="toggleDevice('{{ device.device_name }}', '{{ 'off' if device.status == 'On' else 'on' }}')">
+                        Turn {{ 'Off' if device.status == 'On' else 'On' }}
+                    </button>
+                    <div class="loader" id="loader-{{ device.device_name }}" aria-live="polite">Updating...</div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Graph section moved below device cards -->
+        <canvas id="energyChart" style="margin-top: 40px;"></canvas> <!-- Chart.js Canvas -->
+
+        <div class="footer">
+            <p>&copy; 2024 Smart Home. All rights reserved.</p>
+        </div>
     </div>
 
-    <div class="footer">
-        <p>&copy; 2024 Smart Home. All rights reserved.</p>
-    </div>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script>
+        const ctx = document.getElementById('energyChart').getContext('2d');
+        const energyChart = new Chart(ctx, {
+            type: 'bar', // Keep the chart type as bar
+            data: {
+                labels: [{% for device in electricity_data %}'{{ device.device_name }}'{% if not loop.last %}, {% endif %}{% endfor %}],
+                datasets: [{
+                    label: 'Energy Consumption (kWh)',
+                    data: [{% for device in electricity_data %}{{ device.energy_consumption }}{% if not loop.last %}, {% endif %}{% endfor %}],
+                    backgroundColor: 'rgba(75, 192, 192, 1)', // Default color
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2,
+                    borderSkipped: 'bottom',
+                    hoverBackgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)'
+                    ],
+                    hoverBorderColor: 'rgba(255, 159, 64, 1)',
+                    hoverBorderWidth: 3,
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                    },
+                    tooltip: {
+                        enabled: true,
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                return tooltipItem.dataset.label + ': ' + tooltipItem.raw + ' kWh';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Energy Consumption (kWh)'
+                        },
+                        grid: {
+                            color: '#ccc',
+                            lineWidth: 1,
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Devices'
+                        },
+                        grid: {
+                            color: '#ccc',
+                            lineWidth: 1,
+                        }
+                    }
+                }
+            }
+        });
+
         function toggleDevice(deviceName, action) {
             const loader = document.getElementById(`loader-${deviceName}`);
             loader.style.display = 'block'; // Show loader

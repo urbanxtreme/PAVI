@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recommendations</title>
+
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <!-- Bootstrap for styling -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #f9f9f9, #e3e8ec);
+        }
+        nav {
+            background-color: #007bff;
+        }
+        nav a {
+            color: white;
+            padding: 15px;
+            text-decoration: none;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-top: 70px;
+        }
+        .container {
+            margin-top: 20px;
+            max-width: 800px;
+        }
+        .recommendation {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px 0;
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <a class="navbar-brand" href="/">Smart Home</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/electricity_usage">Electricity Usage</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/recommendations">Recommendations</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Content -->
+    <h1>Recommendations to Lower Electricity Usage</h1>
+
+    <div class="container">
+        <div class="recommendation">
+            <h3>1. Turn Off Lights</h3>
+            <p>When you leave a room, make sure to turn off the lights to save energy.</p>
+        </div>
+        <div class="recommendation">
+            <h3>2. Optimize Thermostat Settings</h3>
+            <p>Set your thermostat a few degrees lower in winter and higher in summer.</p>
+        </div>
+        <div class="recommendation">
+            <h3>3. Unplug Devices</h3>
+            <p>Unplug chargers and devices when not in use to avoid phantom energy usage.</p>
+        </div>
+        <div class="recommendation">
+            <h3>4. Use Energy-Efficient Appliances</h3>
+            <p>Consider switching to appliances that are energy-efficient.</p>
+        </div>
+        <div class="recommendation">
+            <h3>5. Take Shorter Showers</h3>
+            <p>Reduce water heating costs by taking shorter showers.</p>
+        </div>
+        <div class="recommendation">
+            <h3>6. Regular Maintenance</h3>
+            <p>Keep HVAC systems well-maintained for optimal performance.</p>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2024 Smart Home. All rights reserved.</p>
+    </div>
+
+</body>
+</html>

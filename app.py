@@ -19,9 +19,11 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
+
 class User(UserMixin):
     def __init__(self, id):
         self.id = id
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -33,9 +35,11 @@ def load_user(user_id):
         return User(user[0])
     return None
 
+
 @app.route('/favicon.ico')
 def favicon():
     return send_from_directory(app.static_folder, 'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
 
 # Registration route
 @app.route('/register', methods=['GET', 'POST'])
@@ -51,7 +55,7 @@ def register():
         try:
             cur = mysql.connection.cursor()
             cur.execute("INSERT INTO users (username, password, email) VALUES (%s, %s, %s)",
-                       (username, hashed_password, email))
+                        (username, hashed_password, email))
             mysql.connection.commit()
             flash('Registration successful! You can now log in.', 'success')
             return redirect(url_for('login'))
@@ -64,6 +68,7 @@ def register():
         finally:
             cur.close()
     return render_template('register.html')
+
 
 # Login route
 @app.route('/login', methods=['GET', 'POST'])
@@ -82,6 +87,7 @@ def login():
             flash('Invalid username or password')
     return render_template('login.html')
 
+
 # Logout route
 @app.route('/logout')
 @login_required
@@ -89,11 +95,13 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
+
 # Home route
 @app.route('/')
 @login_required
 def home():
     return render_template('index.html')
+
 
 # Get devices route
 @app.route('/devices', methods=['GET'])
@@ -104,6 +112,7 @@ def get_devices():
     devices = cur.fetchall()
     cur.close()
     return jsonify(devices)
+
 
 # Control device route
 @app.route('/devices/<device_name>/<action>', methods=['POST'])
@@ -118,22 +127,29 @@ def control_device(device_name, action):
     cur.close()
     return jsonify({device_name: action})
 
-# Energy route
-@app.route('/energy', methods=['GET'])
+
+# Recommendations for reducing electricity usage
+@app.route('/recommendations')
 @login_required
-def get_energy():
+def recommendations():
     cur = mysql.connection.cursor()
     cur.execute("SELECT device_name, energy_consumption, status FROM devices")
     devices = cur.fetchall()
     cur.close()
-    energy_data = []
+
+    # Create recommendations based on energy consumption
+    recommendations = []
     for device in devices:
-        energy_data.append({
-            'device_name': device[0],
-            'energy_consumption': device[1],
-            'status': 'On' if device[2] else 'Off'
-        })
-    return render_template('energy.html', energy_data=energy_data)
+        device_name, energy_consumption, status = device
+        if energy_consumption > 50:  # Threshold for high energy usage
+            recommendations.append({
+                'device_name': device_name,
+                'tip': f"Consider turning off the {device_name} when not in use! You could save up to 10% on your electricity bill.",
+                'fun_fact': "Did you know? Using energy-efficient devices can save you money in the long run!"
+            })
+
+    return render_template('recommendations.html', recommendations=recommendations)
+
 
 # Electricity usage route
 @app.route('/electricity_usage')
@@ -152,6 +168,7 @@ def electricity_usage():
         })
     return render_template('electricity_usage.html', electricity_data=electricity_data)
 
+
 # Water usage route
 @app.route('/water_usage')
 @login_required
@@ -161,6 +178,7 @@ def water_usage():
         {'device_name': 'Washing Machine', 'water_consumption': 50}
     ]
     return render_template('water_usage.html', water_data=water_data)
+
 
 # Emergency shutdown route
 @app.route('/emergency_shutdown', methods=['POST'])
@@ -173,10 +191,12 @@ def emergency_shutdown():
     flash("Emergency shutdown executed successfully!", 'success')
     return redirect(url_for('home'))
 
+
 # Error handler for 404
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
+
 
 if __name__ == '__main__':
     app.run(debug=True)
