@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Water Usage</title>
+
     <!-- FontAwesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -64,6 +65,19 @@
             background-color: #007bff;
             color: white;
         }
+
+        /* Placeholder for water usage data display */
+        .usage-data {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #e3f2fd;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .usage-data h4 {
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -76,7 +90,7 @@
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
                     <li class="nav-item"><a class="nav-link" href="/devices">Devices</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/energy">Energy Consumption</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/electricity_usage">Electricity Usage</a></li>
                     <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
                 </ul>
             </div>
@@ -88,6 +102,14 @@
     <div class="container">
         <i class="fas fa-tools construction-icon"></i>
         <p class="construction-message">This feature is currently under construction. Please check back soon!</p>
+
+        <!-- Placeholder for future water usage data -->
+        <div class="usage-data">
+            <h4>Current Water Usage:</h4>
+            <p><strong>Washing Machine:</strong> 50 liters</p>
+            <p><strong>Shower:</strong> 30 liters</p>
+            <p><strong>Dishwasher:</strong> 20 liters</p>
+        </div>
     </div>
 
     <!-- Footer -->

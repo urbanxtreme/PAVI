@@ -99,6 +99,26 @@
             position: relative;
         }
 
+        /* Loader */
+        .loader {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 2s linear infinite;
+            display: none;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 60%;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .container {
@@ -124,15 +144,16 @@
             {% endif %}
         {% endwith %}
 
-        <form method="POST">
+        <form method="POST" onsubmit="showLoader()">
             <div class="input-container">
                 <input type="text" name="username" placeholder="Username" aria-label="Username" required>
             </div>
             <div class="input-container">
                 <input type="password" name="password" placeholder="Password" aria-label="Password" required id="password-field">
-                <i class="fas fa-eye password-toggle" id="toggle-password"></i>
+                <i class="fas fa-eye password-toggle" id="toggle-password" aria-label="Toggle password visibility"></i>
             </div>
             <button type="submit" aria-label="Login">Login</button>
+            <div class="loader"></div>
         </form>
 
         <div class="register-link">
@@ -146,14 +167,15 @@
         const passwordField = document.getElementById('password-field');
 
         togglePassword.addEventListener('click', function() {
-            // Toggle the type attribute
             const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordField.setAttribute('type', type);
-
-            // Toggle the eye icon
             this.classList.toggle('fa-eye');
             this.classList.toggle('fa-eye-slash');
         });
+
+        function showLoader() {
+            document.querySelector('.loader').style.display = 'block';
+        }
     </script>
 
 </body>

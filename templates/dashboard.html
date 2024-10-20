@@ -67,6 +67,21 @@
             font-size: 1.4em;
         }
 
+        /* Quick Access Tiles */
+        .tile {
+            background-color: #007bff;
+            color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 10px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .tile:hover {
+            transform: scale(1.05);
+        }
+
         .logout-btn {
             display: block;
             margin: 30px auto;
@@ -116,6 +131,28 @@
     <div class="container">
         <h1>Welcome to Your Smart Home Dashboard</h1>
         <p class="welcome-message">Logged in as: <strong>{{ current_user.id }}</strong></p>
+
+        <!-- Dynamic Statistics Section -->
+        <div class="row text-center mb-4">
+            <div class="col-md-4">
+                <div class="tile">
+                    <h3>Total Energy Consumption</h3>
+                    <p><strong>{{ total_energy_consumption }} kWh</strong></p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="tile">
+                    <h3>Total Water Usage</h3>
+                    <p><strong>{{ total_water_usage }} liters</strong></p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="tile">
+                    <h3>Devices Online</h3>
+                    <p><strong>{{ total_devices_online }}</strong></p>
+                </div>
+            </div>
+        </div>
 
         <!-- Dashboard Cards -->
         <div class="dashboard-card">

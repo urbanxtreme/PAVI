@@ -19,6 +19,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            min-height: 100vh;
         }
 
         nav {
@@ -119,6 +120,9 @@
 
         /* Loader */
         .loader {
+            position: fixed;
+            top: 50%;
+            left: 50%;
             border: 8px solid #f3f3f3;
             border-top: 8px solid #3498db;
             border-radius: 50%;
@@ -126,6 +130,8 @@
             height: 40px;
             animation: spin 2s linear infinite;
             display: none;
+            transform: translate(-50%, -50%);
+            z-index: 2000; /* Higher z-index to be on top */
         }
 
         @keyframes spin {
@@ -209,13 +215,15 @@
         <p>Total Energy: <span id="energy-consumption">0</span> kWh</p>
     </div>
 
+    <!-- Loader -->
+    <div class="loader"></div>
+
     <!-- Embedded JavaScript to fetch data and control devices -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Show loader
-            const loader = document.createElement('div');
-            loader.className = 'loader';
-            document.body.appendChild(loader);
+            const loader = document.querySelector('.loader');
+            loader.style.display = 'block';
 
             // Fetch energy consumption
             fetch('/energy')

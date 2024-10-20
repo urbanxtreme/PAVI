@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,30 +18,24 @@
             margin: 0;
             padding: 0;
         }
-
         nav {
             background-color: #007bff;
         }
-
         nav a {
             color: white;
             padding: 15px;
             text-decoration: none;
         }
-
         h1 {
             color: #333;
             margin-top: 70px;
             text-align: center;
             font-size: 2.5em;
         }
-
         .container {
             margin-top: 20px;
             max-width: 1200px;
         }
-
-        /* Improved card styling */
         .device-card {
             background-color: #fff;
             border: none;
@@ -55,12 +48,10 @@
             display: inline-block;
             width: 260px;
         }
-
         .device-card:hover {
             transform: translateY(-10px);
             box-shadow: 0 12px 18px rgba(0, 0, 0, 0.15);
         }
-
         button {
             padding: 10px 20px;
             margin-top: 15px;
@@ -71,40 +62,32 @@
             cursor: pointer;
             transition: background-color 0.3s, transform 0.3s;
         }
-
         button:hover {
             background-color: #0056b3;
             transform: scale(1.05);
         }
-
         .icon {
             font-size: 50px;
             color: #007bff;
             margin-bottom: 10px;
         }
-
-        /* Status indicators with color */
         .status-on {
             color: #28a745;
             font-weight: bold;
         }
-
         .status-off {
             color: #dc3545;
             font-weight: bold;
         }
-
         .device-image {
             width: 100px;
             height: auto;
             margin-bottom: 15px;
             transition: transform 0.3s;
         }
-
         .device-card:hover .device-image {
             transform: rotate(5deg);
         }
-
         .footer {
             text-align: center;
             margin-top: 40px;
@@ -112,11 +95,16 @@
             background-color: #007bff;
             color: white;
         }
-
         .device-name {
             font-size: 1.3em;
             color: #333;
             margin-bottom: 10px;
+        }
+        .loader {
+            display: none;
+            margin: 15px 0;
+            font-size: 18px;
+            color: #007bff;
         }
     </style>
 </head>
@@ -142,10 +130,8 @@
     <h1>Electricity Usage</h1>
 
     <div class="container d-flex flex-wrap justify-content-center" id="device-list">
-        <!-- Device cards will be injected here -->
         {% for device in electricity_data %}
             <div class="device-card text-center">
-                <!-- Display device image based on the device name -->
                 {% if device.device_name == 'light' %}
                     <img src="{{ url_for('static', filename='light.png') }}" alt="Light" class="device-image">
                 {% elif device.device_name == 'thermostat' %}
@@ -171,6 +157,7 @@
                 <button onclick="toggleDevice('{{ device.device_name }}', '{{ 'off' if device.status == 'On' else 'on' }}')">
                     Turn {{ 'Off' if device.status == 'On' else 'On' }}
                 </button>
+                <div class="loader" id="loader-{{ device.device_name }}" aria-live="polite">Updating...</div>
             </div>
         {% endfor %}
     </div>
@@ -181,12 +168,21 @@
 
     <script>
         function toggleDevice(deviceName, action) {
+            const loader = document.getElementById(`loader-${deviceName}`);
+            loader.style.display = 'block'; // Show loader
+
             fetch(`/devices/${deviceName}/${action}`, { method: 'POST' })
-                .then(() => window.location.reload())  // Refresh the page after updating device status
-                .catch(err => console.error('Error toggling device:', err)); // Log any errors
+                .then(() => {
+                    loader.style.display = 'none'; // Hide loader
+                    window.location.reload();  // Refresh the page after updating device status
+                })
+                .catch(err => {
+                    loader.style.display = 'none'; // Hide loader on error
+                    console.error('Error toggling device:', err); // Log any errors
+                    alert('An error occurred while updating the device.'); // Alert the user
+                });
         }
     </script>
 
 </body>
-
 </html>

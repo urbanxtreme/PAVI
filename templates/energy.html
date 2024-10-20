@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Energy Consumption - Smart Home Dashboard</title>
+
     <!-- FontAwesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -68,6 +69,7 @@
         th {
             background-color: #007bff;
             color: white;
+            cursor: pointer; /* Show pointer cursor on header */
         }
 
         /* Row colors */
@@ -98,6 +100,20 @@
             background-color: #0056b3;
         }
 
+        /* Chart placeholder */
+        .chart-placeholder {
+            height: 300px; /* Set a fixed height for the placeholder */
+            margin-bottom: 30px;
+            background: #f8f9fa;
+            border: 2px dashed #007bff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #007bff;
+            font-size: 1.2em;
+            border-radius: 8px;
+        }
+
         /* Footer */
         .footer {
             text-align: center;
@@ -121,12 +137,18 @@
     <!-- Main Content -->
     <div class="container">
         <h1>Energy Consumption Details</h1>
+
+        <!-- Placeholder for future chart -->
+        <div class="chart-placeholder">
+            Chart Placeholder - Integrate Chart.js here
+        </div>
+
         <table>
             <thead>
                 <tr>
-                    <th>Device Name</th>
-                    <th>Energy Consumption (kWh)</th>
-                    <th>Status</th>
+                    <th onclick="sortTable(0)">Device Name</th>
+                    <th onclick="sortTable(1)">Energy Consumption (kWh)</th>
+                    <th onclick="sortTable(2)">Status</th>
                 </tr>
             </thead>
             <tbody>
@@ -151,6 +173,26 @@
     <div class="footer">
         <p>&copy; 2024 Smart Home. All rights reserved.</p>
     </div>
+
+    <script>
+        // Simple sorting function for table
+        function sortTable(columnIndex) {
+            const table = document.querySelector("table");
+            const rows = Array.from(table.rows).slice(1);
+            const isAscending = table.querySelector(`th:nth-child(${columnIndex + 1})`).classList.toggle("asc");
+            const directionModifier = isAscending ? 1 : -1;
+
+            rows.sort((rowA, rowB) => {
+                const cellA = rowA.cells[columnIndex].innerText;
+                const cellB = rowB.cells[columnIndex].innerText;
+
+                const comparison = isNaN(cellA) ? cellA.localeCompare(cellB) : cellA - cellB;
+                return comparison * directionModifier;
+            });
+
+            rows.forEach(row => table.appendChild(row)); // Append the sorted rows to the table
+        }
+    </script>
 
 </body>
 </html>
