@@ -1,0 +1,72 @@
+<!-- boiling_point_elevation.html -->
+<nav class="nav-menu">
+  <ul>
+    <li><a href="#" class="active"><i class="fas fa-home"></i> Home</a></li>
+    <li><a href="#"><i class="fas fa-bolt"></i> Electricity Usage</a>
+      <ul class="dropdown-menu">
+        <li><a href="#">Usage History</a></li>
+        <li><a href="#">Usage Statistics</a></li>
+      </ul>
+    </li>
+    <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+  </ul>
+</nav>
+
+<style>
+ .nav-menu {
+    background-color: #333;
+    padding: 10px;
+    text-align: center;
+  }
+
+ .nav-menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: space-between;
+  }
+
+ .nav-menu li {
+    margin-right: 20px;
+  }
+
+ .nav-menu a {
+    color: #fff;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+ .nav-menu a:hover {
+    color: #ccc;
+  }
+
+ .nav-menu a.active {
+    color: #fff;
+    background-color: #444;
+    padding: 10px;
+    border-radius: 5px;
+  }
+
+ .dropdown-menu {
+    display: none;
+    position: absolute;
+    background-color: #333;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  }
+
+ .dropdown-menu li {
+    margin-bottom: 10px;
+  }
+
+ .dropdown-menu a {
+    color: #fff;
+    text-decoration: none;
+  }
+
+ .dropdown-menu a:hover {
+    color: #ccc;
+  }
+</style>
