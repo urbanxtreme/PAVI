@@ -197,6 +197,30 @@ def emergency_shutdown():
 def page_not_found(e):
     return render_template('404.html'), 404
 
+# Add these routes to app.py
+
+@app.route('/energy')
+@login_required
+def get_energy_data():
+    try:
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT SUM(energy_consumption) as total FROM devices")
+        result = cur.fetchone()
+        cur.close()
+        
+        return jsonify({
+            'total_energy_consumption': result[0] if result[0] else 0
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/energy')
+@login_required
+def energy_page():
+    return render_template('energy.html')
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

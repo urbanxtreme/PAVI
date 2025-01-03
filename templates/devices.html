@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Smart Home Dashboard for managing water usage, energy consumption, device control, and more.">
-    <title>Smart Home Dashboard</title>
-
+    <title>Smart Home - Devices</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
+    <!-- Use the same CSS from index.html -->
     <style>
         :root {
             --primary-color: #007bff;
@@ -227,140 +225,51 @@
 </head>
 <body>
     <nav>
-        <a href="/" class="active"><i class="fas fa-home"></i> Home</a>
-        <a href="/devices"><i class="fas fa-laptop-house"></i> Devices</a>
+        <a href="/"><i class="fas fa-home"></i> Home</a>
+        <a href="/devices" class="active"><i class="fas fa-laptop-house"></i> Devices</a>
         <a href="/energy"><i class="fas fa-chart-line"></i> Energy</a>
         <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
     </nav>
 
-    <h1>Welcome to Your Smart Home</h1>
+    <h1>Device Management</h1>
 
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <div class="flash-message">
-                {% for message in messages %}
-                    {{ message }}<br>
-                {% endfor %}
-            </div>
-        {% endif %}
-    {% endwith %}
-
-    <div class="container">
-        <div class="option-card" onclick="location.href='/water_usage'" data-tooltip="Monitor your water consumption">
-            <div class="option-icon">
-                <i class="fas fa-tint"></i>
-            </div>
-            <h3>Water Usage</h3>
-            <p>Track and manage your water consumption</p>
-            <button><i class="fas fa-chart-bar"></i> View Details</button>
-        </div>
-
-        <div class="option-card" onclick="location.href='/electricity_usage'" data-tooltip="Monitor your electricity consumption">
-            <div class="option-icon">
-                <i class="fas fa-bolt"></i>
-            </div>
-            <h3>Electricity Usage</h3>
-            <p>Monitor power consumption and costs</p>
-            <button><i class="fas fa-chart-line"></i> View Details</button>
-        </div>
-
-        <div class="option-card" data-tooltip="Change dashboard language">
-            <div class="option-icon">
-                <i class="fas fa-language"></i>
-            </div>
-            <h3>Language</h3>
-            <p>Select your preferred language</p>
-            <select id="language-selector" onchange="changeLanguage()">
-                <option value="en">English</option>
-                <option value="es">Español</option>
-                <option value="fr">Français</option>
-                <option value="de">Deutsch</option>
-            </select>
-        </div>
-
-        <div class="option-card" data-tooltip="Emergency system shutdown">
-            <div class="option-icon">
-                <i class="fas fa-exclamation-triangle"></i>
-            </div>
-            <h3>Emergency</h3>
-            <p>Instantly shut down all systems</p>
-            <button id="emergency-button" onclick="emergencyShutdown()">
-                <i class="fas fa-power-off"></i> Emergency Shutdown
-            </button>
-        </div>
+    <div class="container" id="devices-container">
+        <!-- Later will add devices using end points -->
     </div>
-
-    <div class="energy-stats">
-        <h2><i class="fas fa-chart-pie"></i> Energy Overview</h2>
-        <p>Total Energy Consumption: <strong><span id="energy-consumption">0</span> kWh</strong></p>
-    </div>
-
-    <div class="loader"></div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const loader = document.querySelector('.loader');
-            loader.style.display = 'block';
-
-            fetch('/energy')
-                .then(response => {
-                    if (!response.ok) throw new Error('Network response was not ok');
-                    return response.json();
-                })
-                .then(data => {
-                    document.getElementById('energy-consumption').innerText = 
-                        (data.total_energy_consumption || 0).toLocaleString();
-                })
-                .catch(err => {
-                    console.error('Error:', err);
-                    showError('Failed to load energy data');
-                })
-                .finally(() => loader.style.display = 'none');
+            fetch('/get_devices')
+                .then(response => response.json())
+                .then(devices => {
+                    const container = document.getElementById('devices-container');
+                    devices.forEach(device => {
+                        const card = createDeviceCard(device);
+                        container.appendChild(card);
+                    });
+                });
         });
 
-        function showError(message) {
-            const container = document.querySelector('.container');
-            const error = document.createElement('div');
-            error.className = 'flash-message';
-            error.style.backgroundColor = '#f8d7da';
-            error.style.borderColor = '#f5c6cb';
-            error.style.color = '#721c24';
-            error.textContent = message;
-            container.parentNode.insertBefore(error, container);
-            setTimeout(() => error.remove(), 5000);
+        function createDeviceCard(device) {
+            const div = document.createElement('div');
+            div.className = 'option-card';
+            div.innerHTML = `
+                <div class="option-icon">
+                    <i class="fas fa-plug"></i>
+                </div>
+                <h3>${device.device_name}</h3>
+                <p>Status: ${device.status ? 'On' : 'Off'}</p>
+                <button onclick="toggleDevice('${device.device_name}', ${!device.status})">
+                    ${device.status ? 'Turn Off' : 'Turn On'}
+                </button>
+            `;
+            return div;
         }
 
-        function changeLanguage() {
-            const select = document.getElementById('language-selector');
-            const selectedLanguage = select.value;
-            const selectedText = select.options[select.selectedIndex].text;
-            
-            loader.style.display = 'block';
-            fetch(`/change_language/${selectedLanguage}`, { method: 'POST' })
-                .then(response => {
-                    if (!response.ok) throw new Error('Language change failed');
-                    showError(`Language changed to ${selectedText}`);
-                    setTimeout(() => window.location.reload(), 1500);
-                })
-                .catch(err => showError('Failed to change language'))
-                .finally(() => loader.style.display = 'none');
-        }
-
-        function emergencyShutdown() {
-            if (confirm('⚠️ WARNING: This will shut down all smart home systems immediately.\n\nAre you sure you want to continue?')) {
-                loader.style.display = 'block';
-                fetch('/emergency_shutdown', { 
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'}
-                })
-                .then(response => {
-                    if (!response.ok) throw new Error('Shutdown failed');
-                    showError('Emergency shutdown executed successfully');
-                    setTimeout(() => window.location.reload(), 2000);
-                })
-                .catch(err => showError('Emergency shutdown failed'))
-                .finally(() => loader.style.display = 'none');
-            }
+        function toggleDevice(deviceName, newStatus) {
+            const action = newStatus ? 'on' : 'off';
+            fetch(`/devices/${deviceName}/${action}`, { method: 'POST' })
+                .then(() => window.location.reload());
         }
     </script>
 </body>
